@@ -1,3 +1,5 @@
+var board;
+var gameState;
 
 function main() {
   class GameState {
@@ -39,13 +41,12 @@ function main() {
       }
     }
   }
-  function initHTML(board) {
-  let rows=board.rows
-  let columns=board.columns
+
+  function initHTML(rows, columns) {
     var container = document.querySelector(".container");
     var pauseButton = document.querySelector(".pause-button");
     pauseButton.addEventListener("click", (e) => {
-      var btn = e.target;
+     // var btn = e.target;
       //console.log(btn.classList)
       if (pauseButton.classList.contains("toggled")) {
         pauseButton.textContent = "▐▐";
@@ -221,10 +222,11 @@ function main() {
 document.querySelector(".container").innerHTML="";
 
 let speed=Number(document.getElementById("speed").value) || 1;
-  let size=Number(document.getElementById("size").value) || 10;
+  let size=Number(document.getElementById("size").value) || 25
   var board = new Board(size,size);
   var gameState = new GameState();
-  initHTML(board);
+  initHTML(board.rows, board.columns);
   gameState.setSpeed(speed);
+  
 }
 main();
