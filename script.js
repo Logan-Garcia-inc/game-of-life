@@ -1,3 +1,4 @@
+
 function main() {
   class GameState {
     constructor() {
@@ -38,20 +39,21 @@ function main() {
       }
     }
   }
-
-  function initHTML(rows, columns) {
+  function initHTML(board) {
+  let rows=board.rows
+  let columns=board.columns
     var container = document.querySelector(".container");
     var pauseButton = document.querySelector(".pause-button");
     pauseButton.addEventListener("click", (e) => {
       var btn = e.target;
       //console.log(btn.classList)
-      if (btn.classList.contains("toggled")) {
-        btn.textContent = "▐▐";
-        btn.classList.toggle("toggled");
+      if (pauseButton.classList.contains("toggled")) {
+        pauseButton.textContent = "▐▐";
+        pauseButton.classList.toggle("toggled");
         gameState.start();
       } else {
-        btn.textContent = "▶";
-        btn.classList.toggle("toggled");
+        pauseButton.textContent = "▶";
+        pauseButton.classList.toggle("toggled");
         gameState.stop();
       }
     });
@@ -215,9 +217,14 @@ function main() {
       }
     }
   }
-  var board = new Board();
+  
+document.querySelector(".container").innerHTML="";
+
+let speed=Number(document.getElementById("speed").value) || 1;
+  let size=Number(document.getElementById("size").value) || 10;
+  var board = new Board(size,size);
   var gameState = new GameState();
-  initHTML(board.rows, board.columns);
-  gameState.setSpeed(Number(prompt("update speed: ")));
+  initHTML(board);
+  gameState.setSpeed(speed);
 }
 main();
