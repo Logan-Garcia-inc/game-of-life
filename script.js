@@ -3,7 +3,8 @@ var gameState;
 
 function main() {
   class GameState {
-    constructor() {
+    constructor(board) {
+    	this.board=board
       this.paused = true;
       this.speed = 1;
     }
@@ -34,17 +35,17 @@ function main() {
       //optional speed parameter
 
       while (this.paused == false) {
-        board.updateCells();
-        board.updateDisplay();
+        this.board.updateCells();
+        this.board.updateDisplay();
         await new Promise((r) => setTimeout(r, 1000 / speed));
         //console.log("ping");
       }
     }
   }
 
-  function initHTML(rows, columns) {
-    var container = document.querySelector(".container");
-    var pauseButton = document.querySelector(".pause-button");
+  function initHTML(rows, columns,gameState,board) {
+    let container = document.querySelector(".container");
+var pauseButton = document.querySelector(".pause-button");
     pauseButton.addEventListener("click", (e) => {
      // var btn = e.target;
       //console.log(btn.classList)
@@ -62,14 +63,14 @@ function main() {
     container.style["grid-template-rows"] = `repeat(${rows}, 50px)`;
     container.style["grid-template-columns"] = `repeat(${columns}, 50px)`;
 
-    for (var i = 0; i < columns; i++) {
-      for (var o = 0; o < rows; o++) {
+    for (let i = 0; i < columns; i++) {
+      for (let o = 0; o < rows; o++) {
         var cell = document.createElement("div");
         cell.classList.add("cell");
         cell.id = `${i};${o}`;
         cell.addEventListener("click", (e) => {
           var cell = e.target;
-          var position = cell.id.split(";");
+          let position = cell.id.split(";");
           board.data[position[0]][position[1]].changeState();
 
           board.updateDisplay();
@@ -80,7 +81,8 @@ function main() {
     }
   }
   class Cell {
-    constructor(row, col) {
+    constructor(row, col,board) {
+    this.board=board
       this.position = [row, col];
       this.alive = false;
     }
@@ -89,17 +91,17 @@ function main() {
       this.alive = !this.alive;
       // console.log("alive after: ", this.alive)
       if (this.alive) {
-        board.checkCells.push(this.position);
+        this.board.checkCells.push(this.position);
       }
       return true;
     }
     returnNearbyCells() {
-      var cells = [];
-      var maxWidth = board.rows - 1;
-      var maxHeight = board.columns - 1;
-      for (var row = -1; row < 2; row++)
-        for (var col = -1; col < 2; col++) {
-          var cell = [row + this.position[0], col + this.position[1]];
+      let cells = [];
+      let maxWidth = board.rows - 1;
+      let maxHeight = board.columns - 1;
+      for (let row = -1; row < 2; row++)
+        for (let col = -1; col < 2; col++) {
+          let cell = [row + this.position[0], col + this.position[1]];
 
           if (cell[0] < 0) {
             cell[0] = maxWidth;
@@ -132,10 +134,10 @@ function main() {
       this.rows = rows;
       this.checkCells = [];
       this.data = [];
-      for (var i = 0; i < this.rows; i++) {
+      for (let i = 0; i < this.rows; i++) {
         this.data[i] = {};
-        for (var o = 0; o < this.columns; o++) {
-          this.data[i][o] = new Cell(i, o);
+        for (let o = 0; o < this.columns; o++) {
+          this.data[i][o] = new Cell(i, o, this);
         }
       }
     }
@@ -167,15 +169,15 @@ function main() {
     }
 
     updateCells() {
-      var cells = this.checkCells;
-      var actions = []; // [false, [position]], [true, position] false kill true revive
+      let cells = this.checkCells;
+      let actions = []; // [false, [position]], [true, position] false kill true revive
       var checkedCells = [];
 
-      for (var i = 0; i < cells.length; i++) {
+      for (let i = 0; i < cells.length; i++) {
         // for cell
-        var cell = this.data[cells[i][0]][cells[i][1]];
-        var nearbyCells = cell.returnNearbyCells();
-        for (var o = 0; o < nearbyCells.length; o++) {
+        let cell = this.data[cells[i][0]][cells[i][1]];
+        let nearbyCells = cell.returnNearbyCells();
+        for (let o = 0; o < nearbyCells.length; o++) {
           //for nearby cell
           if (!checkedCells.includes(nearbyCells[o])) {
             actions.push(this.checkRules(nearbyCells[o]));
@@ -190,8 +192,8 @@ function main() {
       }
       //console.log(actions);
       // console.log(this.checkCells);
-      for (var action of actions) {
-        var [actionType, cell] = action;
+      for (let action of actions) {
+        let [actionType, cell] = action;
         if (cell.alive != actionType) {
           cell.changeState();
         }
@@ -200,8 +202,8 @@ function main() {
 
     updateDisplay() {
       var cellsToCheck = this.checkCells.slice();
-      for (var i = 0; i < cellsToCheck.length; i++) {
-        var cell = document.getElementById(
+      for (let i = 0; i < cellsToCheck.length; i++) {
+        let cell = document.getElementById(
           `${cellsToCheck[i][0]};${cellsToCheck[i][1]}`
         );
         // console.log(cellsToCheck)
@@ -220,12 +222,14 @@ function main() {
   }
   
 document.querySelector(".container").innerHTML="";
+board=""
+gameState=""
 
 let speed=Number(document.getElementById("speed").value) || 1;
   let size=Number(document.getElementById("size").value) || 25
   var board = new Board(size,size);
-  var gameState = new GameState();
-  initHTML(board.rows, board.columns);
+  var gameState = new GameState(board);
+  initHTML(board.rows, board.columns, gameState,board);
   gameState.setSpeed(speed);
   
 }
