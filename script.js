@@ -1,7 +1,22 @@
 var board;
 var gameState;
-
+function pause(gameState){
+var pauseButton = document.querySelector(".pause-button");
+    pauseButton.onclick=pause
+      if (pauseButton.classList.contains("toggled")) {
+        pauseButton.textContent = "▐▐";
+        pauseButton.classList.toggle("toggled");
+        gameState.start();
+      } else {
+        pauseButton.textContent = "▶";
+        pauseButton.classList.toggle("toggled");
+        gameState.stop();
+      }
+}
+    
 function main() {
+
+
   class GameState {
   static paused=true;
     constructor(board) {
@@ -44,26 +59,17 @@ function main() {
   }
 
   function initHTML(rows, columns,gameState,board) {
+  document.body.addEventListener("keypress",(e)=>{if (e.key==" "
+  
+ ) {pause(gameState)}console.log(e.key)})
     let container = document.querySelector(".container");
 var pauseButton = document.querySelector(".pause-button");
 var saveButton=document.getElementById("save")
 saveButton.onclick=()=>{gameState.stop();main()}
 
         pauseButton.textContent = "▶";
-    pauseButton.onclick= (e) => {
-     // var btn = e.target;
-      //console.log(btn.classList)
-      if (pauseButton.classList.contains("toggled")) {
-        pauseButton.textContent = "▐▐";
-        pauseButton.classList.toggle("toggled");
-        gameState.start();
-      } else {
-        pauseButton.textContent = "▶";
-        pauseButton.classList.toggle("toggled");
-        gameState.stop();
-      }
-    };
-
+    pauseButton.onclick=()=>{pause(gameState)}
+    
     container.style["grid-template-rows"] = `repeat(${rows}, 50px)`;
     container.style["grid-template-columns"] = `repeat(${columns}, 50px)`;
 
