@@ -3,9 +3,9 @@ var gameState;
 
 function main() {
   class GameState {
+  static paused=true;
     constructor(board) {
     	this.board=board
-      this.paused = true;
       this.speed = 1;
     }
     setSpeed(speed) {
@@ -20,21 +20,21 @@ function main() {
       //console.log("starting");
       //console.log(this.speed);
       //console.log(this.paused)
-      this.paused = false;
+      GameState.paused = false;
       this.gameClock();
       return true;
     }
 
     stop() {
       //console.log("stopping");
-      this.paused = true;
+      GameState.paused = true;
       return true;
     }
 
     gameClock = async (speed = this.speed) => {
       //optional speed parameter
 
-      while (this.paused == false) {
+      while (GameState.paused == false) {
         this.board.updateCells();
         this.board.updateDisplay();
         await new Promise((r) => setTimeout(r, 1000 / speed));
@@ -46,7 +46,11 @@ function main() {
   function initHTML(rows, columns,gameState,board) {
     let container = document.querySelector(".container");
 var pauseButton = document.querySelector(".pause-button");
-    pauseButton.addEventListener("click", (e) => {
+var saveButton=document.getElementById("save")
+saveButton.onclick=()=>{gameState.stop();main()}
+
+        pauseButton.textContent = "▶";
+    pauseButton.onclick= (e) => {
      // var btn = e.target;
       //console.log(btn.classList)
       if (pauseButton.classList.contains("toggled")) {
@@ -58,7 +62,7 @@ var pauseButton = document.querySelector(".pause-button");
         pauseButton.classList.toggle("toggled");
         gameState.stop();
       }
-    });
+    };
 
     container.style["grid-template-rows"] = `repeat(${rows}, 50px)`;
     container.style["grid-template-columns"] = `repeat(${columns}, 50px)`;
@@ -222,14 +226,11 @@ var pauseButton = document.querySelector(".pause-button");
   }
   
 document.querySelector(".container").innerHTML="";
-board=""
-gameState=""
-
 let speed=Number(document.getElementById("speed").value) || 1;
   let size=Number(document.getElementById("size").value) || 25
   var board = new Board(size,size);
   var gameState = new GameState(board);
-  initHTML(board.rows, board.columns, gameState,board);
+  initHTML(board.rows, board.columns, gameState, board);
   gameState.setSpeed(speed);
   
 }
